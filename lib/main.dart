@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,9 +36,11 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String> planList = [];
 
   void _updateMyItems(int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) newIndex--;
-    final plan = planList.removeAt(oldIndex);
-    planList.insert(newIndex, plan);
+    setState(() {
+      if (newIndex > oldIndex) newIndex--;
+      final plan = planList.removeAt(oldIndex);
+      planList.insert(newIndex, plan);
+    });
   }
 
   void _addPlan() {
@@ -52,6 +55,38 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: Colors.teal[200]!,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              )),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            IconButton(
+              onPressed: () {
+                // nothing happens, already on homepage
+              },
+              icon: const Icon(
+                Icons.home_outlined, // homepage
+                color: Colors.white,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CalendarPage()));
+              },
+              icon: const Icon(
+                Icons.calendar_month, // calendar page
+                color: Colors.white,
+              ),
+            ),
+          ])),
       appBar: AppBar(
         backgroundColor: Colors.teal[200]!,
         title: Text(widget.title, style: GoogleFonts.outfit()),
@@ -75,7 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: planList.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                      key: ValueKey(index), title: Text(planList[index]));
+                      key: ValueKey(planList[index]),
+                      title: Text(planList[index]));
                 },
                 onReorder: (oldIndex, newIndex) {
                   setState(() {
@@ -91,6 +127,33 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+// Calendar Page
+class CalendarPage extends StatefulWidget {
+  const CalendarPage({super.key});
+
+  @override
+  State<CalendarPage> createState() => _CalendarPage();
+}
+
+class _CalendarPage extends State<CalendarPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.teal[200]!,
+          title: Text("Calendar", style: GoogleFonts.outfit()),
+          centerTitle: true,
+        ),
+        body: Center(
+            child: TableCalendar(
+          firstDay: DateTime.utc(2010, 10, 16),
+          lastDay: DateTime.utc(2030, 3, 14),
+          focusedDay: DateTime.now(),
+        )));
+  }
+}
+
+// Dialog for creating plan
 Future<void> _dialogBuilder(
     BuildContext context,
     TextEditingController namecontroller,
