@@ -48,7 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
     String desc = _desccontroller.text;
     String date = _datecontroller.text;
     setState(() {
-      planList.add({'name': name, 'completed': false}); // 'name' is key
+      planList.add({
+        'name': name,
+        'desc': desc,
+        'date': date,
+        'completed': false
+      }); // 'name' is key
     });
   }
 
@@ -79,10 +84,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CalendarPage()));
+                        builder: (context) =>
+                            const CalendarPage())); // calendar page
               },
               icon: const Icon(
-                Icons.calendar_month, // calendar page
+                Icons.calendar_month,
                 color: Colors.white,
               ),
             ),
@@ -143,6 +149,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                         setState(() {
                                           planList[index]['name'] =
                                               _namecontroller.text;
+                                          planList[index]['desc'] =
+                                              _desccontroller.text;
+                                          planList[index]['date'] =
+                                              _datecontroller.text;
                                         });
                                         Navigator.of(context).pop();
                                       },
@@ -163,26 +173,30 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                           },
                           child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: planList[index]['completed']
-                                    ? Colors.green // indicates a completed task
-                                    : Colors.yellow, // indicates a pending task
-                                width: 2,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: planList[index]['completed']
+                                      ? Colors
+                                          .green // indicates a completed task
+                                      : Colors
+                                          .yellow, // indicates a pending task
+                                  width: 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 6,
+                                      offset: Offset(2, 2)),
+                                ],
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 6,
-                                    offset: Offset(2, 2)),
-                              ],
-                            ),
-                            child:
-                                ListTile(title: Text(planList[index]['name'])),
-                          )));
+                              child: ListTile(
+                                title: Text(planList[index]['name']),
+                                subtitle: Text(planList[index]['desc']),
+                                trailing: Text(planList[index]['date']),
+                              ))));
                 },
                 onReorder: (oldIndex, newIndex) {
                   setState(() {
@@ -216,11 +230,12 @@ class _CalendarPage extends State<CalendarPage> {
           centerTitle: true,
         ),
         body: Center(
-            child: TableCalendar(
-          firstDay: DateTime.utc(2010, 10, 16),
-          lastDay: DateTime.utc(2030, 3, 14),
-          focusedDay: DateTime.now(),
-        )));
+          child: TableCalendar(
+            firstDay: DateTime.utc(2010, 10, 16),
+            lastDay: DateTime.utc(2030, 3, 14),
+            focusedDay: DateTime.now(),
+          ),
+        ));
   }
 }
 
