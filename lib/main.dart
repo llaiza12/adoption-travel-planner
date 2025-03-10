@@ -94,24 +94,79 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Container(
-          padding: EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          padding: EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
               ElevatedButton(
                 onPressed: () => _dialogBuilder(context, _namecontroller,
                     _desccontroller, _datecontroller, _addPlan),
-                child: Text('Create Plan'),
+                child: Text('Create Plan', style: GoogleFonts.outfit()),
               ),
+              SizedBox(height: 10),
               Expanded(
                   child: ReorderableListView.builder(
                 itemCount: planList.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
+                  return GestureDetector(
                       key: ValueKey(planList[index]),
-                      title: Text(planList[index]));
+                      onLongPress: () => showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                                  title: Text("Edit Plan Details",
+                                      style: GoogleFonts.outfit()),
+                                  content: SingleChildScrollView(
+                                      child: Column(children: <Widget>[
+                                    TextField(
+                                        controller: _namecontroller,
+                                        decoration: InputDecoration(
+                                            hintText: 'Enter plan name')),
+                                    TextField(
+                                        controller: _desccontroller,
+                                        decoration: InputDecoration(
+                                            hintText:
+                                                'Enter plan description')),
+                                    TextField(
+                                        controller: _datecontroller,
+                                        decoration: InputDecoration(
+                                            hintText: 'Enter plan date')),
+                                  ])),
+                                  actions: <Widget>[
+                                    IconButton(
+                                      icon: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.check),
+                                      onPressed: () {
+                                        setState(() {
+                                          planList[index] =
+                                              _namecontroller.text;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ])),
+                      onDoubleTap: () {
+                        setState(() {
+                          planList.removeAt(index);
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 6,
+                                offset: Offset(2, 2)),
+                          ],
+                        ),
+                        child: ListTile(title: Text(planList[index])),
+                      ));
                 },
                 onReorder: (oldIndex, newIndex) {
                   setState(() {
