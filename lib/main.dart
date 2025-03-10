@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _namecontroller = TextEditingController();
   final TextEditingController _desccontroller = TextEditingController();
   final TextEditingController _datecontroller = TextEditingController();
-  List<String> planList = [];
+  List<Map<String, dynamic>> planList = []; // list of maps
 
   void _updateMyItems(int oldIndex, int newIndex) {
     setState(() {
@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     String desc = _desccontroller.text;
     String date = _datecontroller.text;
     setState(() {
-      planList.add(name);
+      planList.add({'name': name, 'completed': false}); // 'name' is key
     });
   }
 
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       icon: Icon(Icons.check),
                                       onPressed: () {
                                         setState(() {
-                                          planList[index] =
+                                          planList[index]['name'] =
                                               _namecontroller.text;
                                         });
                                         Navigator.of(context).pop();
@@ -153,20 +153,36 @@ class _MyHomePageState extends State<MyHomePage> {
                           planList.removeAt(index);
                         });
                       },
-                      child: Container(
-                        padding: const EdgeInsets.all(.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 6,
-                                offset: Offset(2, 2)),
-                          ],
-                        ),
-                        child: ListTile(title: Text(planList[index])),
-                      ));
+                      child: GestureDetector(
+                          onHorizontalDragUpdate: (details) {
+                            // checks distance swiped
+                            if (details.primaryDelta! > 8) {
+                              setState(() {
+                                planList[index]['completed'] = true;
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: planList[index]['completed']
+                                    ? Colors.green // indicates a completed task
+                                    : Colors.yellow, // indicates a pending task
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 6,
+                                    offset: Offset(2, 2)),
+                              ],
+                            ),
+                            child:
+                                ListTile(title: Text(planList[index]['name'])),
+                          )));
                 },
                 onReorder: (oldIndex, newIndex) {
                   setState(() {
